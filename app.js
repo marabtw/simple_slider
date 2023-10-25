@@ -1,101 +1,120 @@
-const imageSrcArray = [
-  "img/zenitsu-agastuma.jpeg",
-  "img/zenitsu-agastuma.jpeg",
-  "img/zenitsu-agastuma.jpeg",
-  "img/zenitsu-agastuma.jpeg",
-  "img/zenitsu-agastuma.jpeg",
-  "img/zenitsu-agastuma.jpeg",
-];
+const sliderConfig = {
+  imageSrcArray: [
+    "img/zenitsu-agastuma.jpeg",
+    "img/zenitsu-agastuma.jpeg",
+    "img/zenitsu-agastuma.jpeg",
+    "img/zenitsu-agastuma.jpeg",
+		"img/zenitsu-agastuma.jpeg",
+  ],
+  delay: 1000,
+	isAnimating: true
+}
 
-const colorArray = ["grey", "blue", "green", "black", "brown"];
+let currentIndex = countCurrentIndex() - 1
+console.log(currentIndex)
 
-const items = document.querySelectorAll(".slider__image-block");
-const centerItem = document.querySelector(".slider__item_center");
-const nextItem = document.querySelector(".slider__item_next");
-const previousItem = document.querySelector(".slider__item_previous");
-const nextHiddenItem = document.querySelector(".slider__item_hidden-next");
-const previousHIddenItem = document.querySelector(
-  ".slider__item_hidden-previous"
-);
-const nextButton = document.querySelector(".slider__button-next");
-const previousButton = document.querySelector(".slider__button-previous");
-
-let currentIndex = countCurrentIndex();
+const elements = {
+  items: document.querySelectorAll(".slider__image-block"),
+  centerItem: document.querySelector(".slider__item_center"),
+  nextItem: document.querySelector(".slider__item_next"),
+  previousItem: document.querySelector(".slider__item_previous"),
+  nextHiddenItem: document.querySelector(".slider__item_hidden-next"),
+  previousHiddenItem: document.querySelector(".slider__item_hidden-previous"),
+  nextButton: document.querySelector(".slider__button-next"),
+  previousButton: document.querySelector(".slider__button-previous"),
+}
 
 function countCurrentIndex() {
-  return colorArray.length % 2 == 0
-    ? colorArray.length / 2
-    : parseInt(colorArray.length / 2) + 1;
+  return sliderConfig.imageSrcArray.length % 2 == 0
+    ? sliderConfig.imageSrcArray.length / 2
+    : parseInt(sliderConfig.imageSrcArray.length / 2) + 1
 }
 
 function init() {
-
-  Array.from(items).forEach((e, i) => {
-    e.style.background = `${colorArray[i]}`;
-  });
-
-  nextButton.addEventListener("click", changeNext);
-  previousButton.addEventListener("click", changePrevious);
+  updateBackgrounds()
+	addIndicator()
+  elements.nextButton.addEventListener("click", changeNext)
+  elements.previousButton.addEventListener("click", changePrevious)
 }
 
 function changeNext() {
-	currentIndex++
-	nextChangeToggle()
-	setTimeout(nextChangeToggle,1000)
-	setTimeout(() => {changeBackground('next')}, 1000)
+	if(!sliderConfig.isAnimating) return
+	sliderConfig.isAnimating = false
+  currentIndex++
+  nextChangeToggle()
+  setTimeout(nextChangeToggle, sliderConfig.delay)
+  setTimeout(() => changeBackground('next'), sliderConfig.delay)
 }
 
 function changePrevious() {
-	currentIndex--
-	previousChangeToggle()
-	setTimeout(previousChangeToggle,1000)
-	setTimeout(() => {changeBackground('prev')}, 1000)
+	if(!sliderConfig.isAnimating) return
+	sliderConfig.isAnimating = false
+  currentIndex--
+  previousChangeToggle()
+  setTimeout(previousChangeToggle, sliderConfig.delay)
+  setTimeout(() => changeBackground('prev'), sliderConfig.delay)
 }
 
 function nextChangeToggle() {
-	previousHIddenItem.classList.toggle('to-right')
-	previousHIddenItem.classList.toggle('slider__item_hidden-previous')
-	previousHIddenItem.classList.toggle('slider__item_previous')
-	previousItem.classList.toggle('to-right')
-	previousItem.classList.toggle('slider__item_previous')
-	previousItem.classList.toggle('slider__item_center')
-	centerItem.classList.toggle('to-right')
-	centerItem.classList.toggle('slider__item_center')
-	centerItem.classList.toggle('slider__item_next')
-	nextItem.classList.toggle('to-right')
-	nextItem.classList.toggle('slider__item_next')
-	nextItem.classList.toggle('slider__item_hidden-next')
+	elements.previousHiddenItem.classList.toggle('to-right')
+	elements.previousHiddenItem.classList.toggle('slider__item_hidden-previous')
+	elements.previousHiddenItem.classList.toggle('slider__item_previous')
+	elements.previousItem.classList.toggle('to-right')
+	elements.previousItem.classList.toggle('slider__item_previous')
+	elements.previousItem.classList.toggle('slider__item_center')
+	elements.centerItem.classList.toggle('to-right')
+	elements.centerItem.classList.toggle('slider__item_center')
+	elements.centerItem.classList.toggle('slider__item_next')
+	elements.nextItem.classList.toggle('to-right')
+	elements.nextItem.classList.toggle('slider__item_next')
+	elements.nextItem.classList.toggle('slider__item_hidden-next')
 }
 
 function previousChangeToggle() {
-	nextHiddenItem.classList.toggle('to-left')
-	nextHiddenItem.classList.toggle('slider__item_hidden-next')
-	nextHiddenItem.classList.toggle('slider__item_next')
-	nextItem.classList.toggle('to-left')
-	nextItem.classList.toggle('slider__item_next')
-	nextItem.classList.toggle('slider__item_center')
-	centerItem.classList.toggle('to-left')
-	centerItem.classList.toggle('slider__item_center')
-	centerItem.classList.toggle('slider__item_previous')
-	previousItem.classList.toggle('to-left')
-	previousItem.classList.toggle('slider__item_previous')
-	previousItem.classList.toggle('slider__item_hidden-previous')
+	elements.nextHiddenItem.classList.toggle('to-left')
+	elements.nextHiddenItem.classList.toggle('slider__item_hidden-next')
+	elements.nextHiddenItem.classList.toggle('slider__item_next')
+	elements.nextItem.classList.toggle('to-left')
+	elements.nextItem.classList.toggle('slider__item_next')
+	elements.nextItem.classList.toggle('slider__item_center')
+	elements.centerItem.classList.toggle('to-left')
+	elements.centerItem.classList.toggle('slider__item_center')
+	elements.centerItem.classList.toggle('slider__item_previous')
+	elements.previousItem.classList.toggle('to-left')
+	elements.previousItem.classList.toggle('slider__item_previous')
+	elements.previousItem.classList.toggle('slider__item_hidden-previous')
 }
 
 function changeBackground(direction) {
-	if(direction === 'next'){
-		const lastElem = colorArray.splice(colorArray.length - 1, 1)[0];
-		colorArray.splice(0, 0, lastElem);
-	}
-	else if(direction === 'prev'){
-		const firstElem = colorArray.splice(0,1)[0]
-		colorArray.splice(colorArray.length,1,firstElem)
-	}
-
-	Array.from(items).forEach((e, i) => {
-    e.style.background = `${colorArray[i]}`;
-  });
-
+  if (direction === 'next') {
+    const lastElem = sliderConfig.imageSrcArray.pop()
+    sliderConfig.imageSrcArray.unshift(lastElem)
+  } else if (direction === 'prev') {
+    const firstElem = sliderConfig.imageSrcArray.shift()
+    sliderConfig.imageSrcArray.push(firstElem)
+  }
+	console.log(currentIndex)
+  updateBackgrounds()
 }
 
-init();
+function updateBackgrounds() {
+	elements.items.forEach((element, index) => {
+		element.style.backgroundImage = `url(${sliderConfig.imageSrcArray[index]})`
+  })
+	sliderConfig.isAnimating = true
+}
+
+function addIndicator() {
+  const sliderIndicatorContainer = document.querySelector('.slider-indicators')
+
+  sliderConfig.imageSrcArray.forEach((e,i) => {
+    const indicator = document.createElement('span');
+    indicator.className = 'slider-indicators__indicator';
+		if(i === currentIndex) {
+			indicator.classList.add('active')
+		}
+    sliderIndicatorContainer.appendChild(indicator);
+  })
+}
+
+init()
