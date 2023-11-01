@@ -115,18 +115,18 @@ img {
 .slider-indicators__indicator{
 	display: flex;
 	flex: 1;
-	/* background-color: rgb(233, 141, 20); */
 	border: 2px solid rgb(0, 0, 0, .2);
 	border-radius: 5px;
 	cursor: pointer;
+	z-index: 5;
 }
 
 .slider-indicators__indicator:not(.active):hover {
-	background-color: rgb(222, 175, 23);
+	background: rgb(222, 175, 23)
 }
 
 .active {
-	background-color: rgb(4, 133, 6);
+  background: rgb(4, 133, 6);
 }
 
 .to-left {
