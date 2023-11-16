@@ -9,7 +9,8 @@ const sliderConfig = {
     "img/photo2.avif",
   ],
   delay: 1000,
-  isAnimating: true,
+  isButtonClicked: false,
+  isIndicatorClicked: false,
 }
 
 const elements = {
@@ -29,8 +30,22 @@ let currentIndex = countCurrentIndex() - 1
 function init() {
   updateBackgrounds()
   createIndicators()
-  elements.nextButton.addEventListener("click", changeNext)
-  elements.previousButton.addEventListener("click", changePrevious)
+  elements.nextButton.addEventListener("click", () => {
+		if (sliderConfig.isButtonClicked || sliderConfig.isIndicatorClicked) return
+		sliderConfig.isButtonClicked = true
+		changeNext()
+		setTimeout(() => {
+			sliderConfig.isButtonClicked = false
+		},sliderConfig.delay)
+	})
+  elements.previousButton.addEventListener("click", () => {
+		if (sliderConfig.isButtonClicked || sliderConfig.isIndicatorClicked) return
+		sliderConfig.isButtonClicked = true
+		changePrevious()
+		setTimeout(() => {
+			sliderConfig.isButtonClicked = false
+		},sliderConfig.delay)
+	})
   updateIndicatorEventListener()
 }
 
@@ -44,7 +59,6 @@ function updateBackgrounds() {
   elements.items.forEach((element, index) => {
     element.style.backgroundImage = `url(${sliderConfig.imageSrcArray[index]})`
   })
-  sliderConfig.isAnimating = true
 }
 
 function createIndicators() {
@@ -60,8 +74,6 @@ function createIndicators() {
 }
 
 function changeNext() {
-  if (!sliderConfig.isAnimating) return
-  sliderConfig.isAnimating = false
   nextChangeToggle()
   setTimeout(nextChangeToggle, sliderConfig.delay)
   setTimeout(() => changeBackground("next"), sliderConfig.delay)
@@ -69,26 +81,10 @@ function changeNext() {
 }
 
 function changePrevious() {
-  if (!sliderConfig.isAnimating) return
-  sliderConfig.isAnimating = false
   previousChangeToggle()
   setTimeout(previousChangeToggle, sliderConfig.delay)
   setTimeout(() => changeBackground("prev"), sliderConfig.delay)
   updateIndicator("prev")
-}
-
-function updateIndicatorEventListener() {
-  elements.sliderIndicatorContainer.addEventListener("click", function (event) {
-    if (!sliderConfig.isAnimating) return
-    sliderConfig.isAnimating = false
-    if (
-      !event.target.classList.contains("active") &&
-      event.target.classList.contains("slider-indicators__indicator")
-    ) {
-      const targetIndex = event.target.getAttribute("data-index")
-      // changeindicator(targetIndex)
-    }
-  })
 }
 
 function nextChangeToggle() {
@@ -154,21 +150,54 @@ function updateIndicator(direction) {
   elements.isAnimating = true
 }
 
+function updateIndicatorEventListener() {
+  elements.sliderIndicatorContainer.addEventListener("click", function (event) {
+		const element = event.target
+		if(element.tagName === 'SPAN'){
+			if (!element.classList.contains("active")) {
+					if (sliderConfig.isIndicatorClicked || sliderConfig.isButtonClicked) return
+					sliderConfig.isIndicatorClicked = true
+					const targetIndex = +(event.target.getAttribute("data-index"))
+					changeindicator(targetIndex)
+			}
+		}
+  })
+}
+
 function changeindicator(targetIndex) {
-  console.log("targetIndex initial: " + targetIndex)
-  console.log('current index initial ' + currentIndex)
-  if (currentIndex < targetIndex) {
-		for(let i = currentIndex; i < targetIndex; i++){
-			changeNext()
-			console.log(currentIndex + " current index")
+	if(currentIndex === 0 && targetIndex === sliderConfig.imageSrcArray.length - 1){
+		changePrevious()
+		setTimeout(() => {
+			sliderConfig.isIndicatorClicked = false
+		},sliderConfig.delay*1.1)
+	}
+	else if(currentIndex === sliderConfig.imageSrcArray.length - 1 && targetIndex === 0){
+		changeNext()
+		setTimeout(() => {
+			sliderConfig.isIndicatorClicked = false
+		},sliderConfig.delay*1.1)
+	}
+  else if (currentIndex < targetIndex) {
+		const indexDifference = targetIndex - currentIndex
+		for(let i = 0; i < indexDifference; i++){
+			setTimeout((index) => {
+				changeNext()
+				if(index === indexDifference - 1){
+					sliderConfig.isIndicatorClicked = false
+				}
+			}, i*sliderConfig.delay*1.1, i)
 		}
   } else if (currentIndex > targetIndex) {
-		for(let i = targetIndex; i < currentIndex; i++){
-			changePrevious()
-			console.log(currentIndex + " current index")
+		const indexDifference = currentIndex - targetIndex
+		for(let i = 0; i < indexDifference; i++){
+			setTimeout((index) => {
+				changePrevious()
+				if(index === indexDifference - 1){
+					sliderConfig.isIndicatorClicked = false
+				}
+			}, i*sliderConfig.delay*1.1, i)
 		}
   }
-	console.log(currentIndex + ' end')
 }
 
 init()

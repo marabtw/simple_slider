@@ -17,7 +17,7 @@ img {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background-color: aqua;
+  background-color: #35889a;
 }
 
 .slider {
@@ -27,7 +27,7 @@ img {
   top: 50%;
   left: 50%;
   translate: -50% -50%;
-  background-color: rgb(191, 222, 104);
+  /* background-color: rgb(191, 222, 104); */
   height: 100%;
 }
 
@@ -39,7 +39,7 @@ img {
   position: absolute;
   width: 100%;
   height: 100%;
-  border: 3px solid rgb(27, 3, 208);
+  /* border: 3px solid rgb(27, 3, 208); */
   overflow: hidden;
 }
 
@@ -53,12 +53,8 @@ img {
   border-radius: 8px;
   background: rgb(0, 0, 0, 0.3);
   overflow: hidden;
-}
-
-.slider__item-previous {
-}
-
-.slider__item-next {
+	cursor: pointer;
+	box-shadow: 0px 0px 20px -5px rgb(0, 0, 0);
 }
 
 .slider__image-block {
@@ -82,14 +78,21 @@ img {
   align-items: center;
   top: 50%;
   transform: translateY(-50%);
-  width: 1rem;
+  width: 3rem;
   aspect-ratio: 1;
-  background: none;
-  border: none;
   font-size: 3rem;
   color: white;
   cursor: pointer;
   z-index: 2;
+	border-radius: 50%;
+	border: 1px solid black;
+	background: none;
+	overflow: hidden;
+}
+
+.slider__button:hover{
+	color: black;
+	background: rgb(0, 0, 0, .2);
 }
 
 .slider__button-previous {
@@ -101,32 +104,41 @@ img {
 }
 
 .slider-indicators {
-  position: absolute;
-  bottom: 5%;
+  position: fixed;
+  top: 5%;
   left: 50%;
   translate: -50% 0%;
-  width: 30%;
-  height: 2%;
+  /* width: 30%; */
+  /* height: clamp(8px, .8rem, 1.8rem); */
   display: flex;
   justify-content: space-between;
-	gap: 1%;
+	/* gap: 4%; */
+	z-index: 1;
+}
+
+.slider-indicators__indicator:not(:first-child){
+	margin-left: 5px;
 }
 
 .slider-indicators__indicator{
-	display: flex;
-	flex: 1;
-	border: 2px solid rgb(0, 0, 0, .2);
-	border-radius: 5px;
+	width: 10px;
+	height: 10px;
+	/* display: flex;
+	flex: 1; */
+	border-radius: 50%;
+	background: gray;
 	cursor: pointer;
 	z-index: 5;
+	transition: .5s;
 }
 
 .slider-indicators__indicator:not(.active):hover {
-	background: rgb(222, 175, 23)
+	background: rgb(255, 255, 255)
 }
 
 .active {
-  background: rgb(4, 133, 6);
+  background: rgb(255, 255, 255);
+	scale: 1.5;
 }
 
 .to-left {
@@ -149,6 +161,14 @@ img {
 .slider__item_previous,
 .slider__item_next {
   scale: 0.9;
+	transform: perspective(500px) rotateY(10deg);
+}
+
+.slider__item_previous{
+	transform: perspective(500px) rotateY(10deg);
+}
+.slider__item_next {
+	transform: perspective(500px) rotateY(-10deg);
 }
 
 .slider__item_center {
