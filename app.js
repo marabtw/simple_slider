@@ -167,50 +167,31 @@ function updateIndicatorEventListener() {
 }
 
 function changeindicator(targetIndex) {
-  if (
-    currentIndex === 0 &&
-    targetIndex === sliderConfig.imageSrcArray.length - 1
-  ) {
-    changePrevious()
-    setTimeout(() => {
-      sliderConfig.isIndicatorClicked = false
-    }, sliderConfig.delay * 1.1)
-  } else if (
-    currentIndex === sliderConfig.imageSrcArray.length - 1 &&
-    targetIndex === 0
-  ) {
-    changeNext()
-    setTimeout(() => {
-      sliderConfig.isIndicatorClicked = false
-    }, sliderConfig.delay * 1.1)
-  } else if (currentIndex < targetIndex) {
+  if (currentIndex < targetIndex) {
+    const currentDirectionDifference = targetIndex - currentIndex
+    const reverseDirectionDifference =
+      sliderConfig.imageSrcArray.length - 1 - targetIndex + currentIndex + 1
+    currentDirectionDifference > reverseDirectionDifference
+      ? startCycle(reverseDirectionDifference, "prev")
+      : startCycle(currentDirectionDifference, "next")
+  } else if (targetIndex < currentIndex) {
+    const currentDirectionDifference = currentIndex - targetIndex
+    const reverseDirectionDifference =
+      sliderConfig.imageSrcArray.length - 1 - currentIndex + targetIndex + 1
+    currentDirectionDifference < reverseDirectionDifference
+      ? startCycle(currentDirectionDifference, "prev")
+      : startCycle(reverseDirectionDifference, "next")
+  } else {
+    const currentDirectionDifference = currentIndex - targetIndex
+    startCycle(currentDirectionDifference, "next")
+  }
 
-    const indexDifference = targetIndex - currentIndex
-		// const minusIndexDifference = -(currentIndex - targetIndex)
-		// if(indexDifference > minusIndexDifference)
-
-		// function forFor(maxIndex){
-
-		// }
-    for (let i = 0; i < indexDifference; i++) {
+  function startCycle(maxIndex, direction) {
+    for (let i = 0; i < maxIndex; i++) {
       setTimeout(
         (index) => {
-          changeNext()
-          if (index === indexDifference - 1) {
-            sliderConfig.isIndicatorClicked = false
-          }
-        },
-        i * sliderConfig.delay * 1.1,
-        i
-      )
-    }
-  } else if (currentIndex > targetIndex) {
-    const indexDifference = currentIndex - targetIndex
-    for (let i = 0; i < indexDifference; i++) {
-      setTimeout(
-        (index) => {
-          changePrevious()
-          if (index === indexDifference - 1) {
+          direction === "next" ? changeNext() : changePrevious()
+          if (index === maxIndex - 1) {
             sliderConfig.isIndicatorClicked = false
           }
         },
@@ -224,23 +205,23 @@ function changeindicator(targetIndex) {
 const centerItemConfig = {
   mouseX: 0,
   mouseY: 0,
-	cardEvenly: true,
-	positionInfo: elements.centerItem.getBoundingClientRect()
+  cardEvenly: true,
+  positionInfo: elements.centerItem.getBoundingClientRect(),
 }
 
 function addEventListeners() {
-	elements.centerItem.addEventListener("mouseenter", (e) => {
-		if(sliderConfig.isButtonClicked || sliderConfig.isIndicatorClicked) return
-		centerItemConfig.cardEvenly = false
-		elements.centerItem.addEventListener("mousemove", handleMouseMove)
-	})
-	
-	elements.centerItem.addEventListener("mouseleave", (e) => {
-		if(sliderConfig.isButtonClicked || sliderConfig.isIndicatorClicked) return
-		centerItemConfig.cardEvenly = true
-		elements.centerItem.removeEventListener("mousemove", handleMouseMove)
-		handleMouseMove(e)
-	})
+  elements.centerItem.addEventListener("mouseenter", (e) => {
+    if (sliderConfig.isButtonClicked || sliderConfig.isIndicatorClicked) return
+    centerItemConfig.cardEvenly = false
+    elements.centerItem.addEventListener("mousemove", handleMouseMove)
+  })
+
+  elements.centerItem.addEventListener("mouseleave", (e) => {
+    if (sliderConfig.isButtonClicked || sliderConfig.isIndicatorClicked) return
+    centerItemConfig.cardEvenly = true
+    elements.centerItem.removeEventListener("mousemove", handleMouseMove)
+    handleMouseMove(e)
+  })
 }
 
 function handleMouseMove(e) {
@@ -256,18 +237,22 @@ function centerItemRotate() {
     height: centerItemConfig.positionInfo.height,
     left: centerItemConfig.positionInfo.left,
     top: centerItemConfig.positionInfo.top,
-    centerX: centerItemConfig.positionInfo.x + centerItemConfig.positionInfo.width / 2,
-    centerY: centerItemConfig.positionInfo.y + centerItemConfig.positionInfo.height / 2,
+    centerX:
+      centerItemConfig.positionInfo.x + centerItemConfig.positionInfo.width / 2,
+    centerY:
+      centerItemConfig.positionInfo.y +
+      centerItemConfig.positionInfo.height / 2,
   }
 
-	if(centerItemConfig.cardEvenly){
-		elements.centerItem.style.transform = ``
-	}
-	else if(!centerItemConfig.cardEvenly){
-		const rightRotateDegree = -multiplier * (centerItemConfig.mouseX - centerItemInfo.centerX)
-		const leftRotateDegree  = multiplier * (centerItemConfig.mouseY - centerItemInfo.centerY)
-		elements.centerItem.style.transform = `perspective(200px) rotateX(${leftRotateDegree}deg) rotateY(${rightRotateDegree }deg)`
-	}
+  if (centerItemConfig.cardEvenly) {
+    elements.centerItem.style.transform = ``
+  } else if (!centerItemConfig.cardEvenly) {
+    const rightRotateDegree =
+      -multiplier * (centerItemConfig.mouseX - centerItemInfo.centerX)
+    const leftRotateDegree =
+      multiplier * (centerItemConfig.mouseY - centerItemInfo.centerY)
+    elements.centerItem.style.transform = `perspective(200px) rotateX(${leftRotateDegree}deg) rotateY(${rightRotateDegree}deg)`
+  }
 }
 
 init()
